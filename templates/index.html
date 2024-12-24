@@ -12,19 +12,25 @@
             height: 100vh;
             margin: 0;
         }
-        canvas {
-            background: black;
+        .clock-container {
+            border: 2px solid #aacde2;
+            padding: 10px;
         }
+        /* canvas {
+            background: black;
+        } */
     </style>
 </head>
 <body>
-    <canvas id="clock" width="600" height="600"></canvas>
+    <div class="clock-container">
+        <canvas id="clock" width="600" height="600"></canvas>
+    </div>
     <script>
         const canvas = document.getElementById('clock');
         const ctx = canvas.getContext('2d');
         
-        function drawNumber(x, y, number) {
-            ctx.fillStyle = 'white';
+        function drawNumber(x, y, number, color) {
+            ctx.fillStyle = color;
             ctx.font = 'bold 24px Arial';
             ctx.fillText(number, x, y);
         }
@@ -60,18 +66,24 @@
             // Minutero
             const minuteAngle = minutes * Math.PI / 30;
             const minutePositions = calculatePositions(centerX, centerY, minuteAngle, 5, segmentLength);
-            minutePositions.forEach(pos => drawNumber(pos[0], pos[1], minutes));
+            minutePositions.forEach(pos => drawNumber(pos[0], pos[1], minutes, '#aacde2'));
             
             // Hora
             const hourAngle = (hours * Math.PI / 6) + (minutes * Math.PI / 360);
             const hourPositions = calculatePositions(centerX, centerY, hourAngle, 3, segmentLength);
-            hourPositions.forEach(pos => drawNumber(pos[0], pos[1], hours));
+            hourPositions.forEach(pos => drawNumber(pos[0], pos[1], hours, '#aacde2'));
             
             // Punto central
             ctx.beginPath();
             ctx.arc(centerX, centerY, 5, 0, 2 * Math.PI);
             ctx.fillStyle = '#aacde2';
             ctx.fill();
+
+            // Firma
+            ctx.fillStyle = '#aacde2';
+            ctx.font = '10px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText('by Sandreke', centerX, centerY + 15);
         }
         
         setInterval(updateClock, 1000);
