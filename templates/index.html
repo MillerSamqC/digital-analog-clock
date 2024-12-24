@@ -1,0 +1,81 @@
+<!-- templates/index.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Reloj de Números</title>
+    <style>
+        body {
+            background: black;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        canvas {
+            background: black;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="clock" width="600" height="600"></canvas>
+    <script>
+        const canvas = document.getElementById('clock');
+        const ctx = canvas.getContext('2d');
+        
+        function drawNumber(x, y, number) {
+            ctx.fillStyle = 'white';
+            ctx.font = 'bold 24px Arial';
+            ctx.fillText(number, x, y);
+        }
+        
+        function calculatePositions(centerX, centerY, angle, numSegments, segmentLength) {
+            const positions = [];
+            for (let i = 0; i < numSegments; i++) {
+                const length = segmentLength * (i + 1);
+                const x = centerX + length * Math.sin(angle);
+                const y = centerY - length * Math.cos(angle);
+                positions.push([x, y]);
+            }
+            return positions;
+        }
+        
+        function updateClock() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            const now = new Date();
+            const hours = now.getHours() % 12 || 12;
+            const minutes = now.getMinutes();
+            const seconds = now.getSeconds();
+            
+            const centerX = canvas.width / 2;
+            const centerY = canvas.height / 2;
+            const segmentLength = 45;
+            
+            // Segundero
+            const secondAngle = seconds * Math.PI / 30;
+            const secondPositions = calculatePositions(centerX, centerY, secondAngle, 6, segmentLength);
+            secondPositions.forEach(pos => drawNumber(pos[0], pos[1], seconds, '#aacde2'));
+            
+            // Minutero
+            const minuteAngle = minutes * Math.PI / 30;
+            const minutePositions = calculatePositions(centerX, centerY, minuteAngle, 5, segmentLength);
+            minutePositions.forEach(pos => drawNumber(pos[0], pos[1], minutes));
+            
+            // Hora
+            const hourAngle = (hours * Math.PI / 6) + (minutes * Math.PI / 360);
+            const hourPositions = calculatePositions(centerX, centerY, hourAngle, 3, segmentLength);
+            hourPositions.forEach(pos => drawNumber(pos[0], pos[1], hours));
+            
+            // Punto central
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, 5, 0, 2 * Math.PI);
+            ctx.fillStyle = '#aacde2';
+            ctx.fill();
+        }
+        
+        setInterval(updateClock, 1000);
+        updateClock();
+    </script>
+</body>
+</html>
